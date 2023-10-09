@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatelessWidget {
   final String? label;
   final String? hint;
+  final TextStyle? hintStyle;
   final String? errorMessage;
   final bool obscureText;
   final TextInputType? keyboardType;
@@ -10,7 +11,9 @@ class CustomTextFormField extends StatelessWidget {
   final Function(String)? onFieldSubmitted;
   final String? Function(String?)? validator;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
 
   const CustomTextFormField({
     super.key,
@@ -24,6 +27,9 @@ class CustomTextFormField extends StatelessWidget {
     this.onFieldSubmitted,
     this.prefixIcon,
     this.controller,
+    this.suffixIcon,
+    this.focusNode,
+    this.hintStyle,
   });
 
   @override
@@ -55,6 +61,7 @@ class CustomTextFormField extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
+        focusNode: focusNode,
         validator: validator,
         obscureText: obscureText,
         keyboardType: keyboardType,
@@ -68,6 +75,7 @@ class CustomTextFormField extends StatelessWidget {
             fontSize: size.width * .04,
           ),
           prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
           enabledBorder: border,
           focusedBorder: border,
           errorBorder: border.copyWith(
@@ -77,6 +85,7 @@ class CustomTextFormField extends StatelessWidget {
           isDense: true,
           label: label != null ? Text(label!) : null,
           hintText: hint,
+          hintStyle: hintStyle,
           errorText: errorMessage,
           focusColor: colors.primary,
           // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )

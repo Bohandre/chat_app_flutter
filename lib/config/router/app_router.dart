@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chat_app/presentation/screens/screens.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/users',
   routes: [
     GoRoute(
       path: '/',
@@ -24,6 +24,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/chat',
       builder: (context, state) => const ChatScreen(),
+    ),
+    GoRoute(
+      path: '/theme-changer',
+      builder: (context, state) => const ThemeChangerScreen(),
     ),
   ],
 );
