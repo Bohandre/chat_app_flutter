@@ -1,17 +1,19 @@
 import 'package:chat_app/config/config.dart';
+import 'package:chat_app/presentation/providers/auth_provider.dart';
 import 'package:chat_app/presentation/screens/users_screen/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class UserScreen extends StatefulWidget {
+class UserScreen extends ConsumerStatefulWidget {
   const UserScreen({super.key});
 
   @override
-  State<UserScreen> createState() => _UserScreenState();
+  UserScreenState createState() => UserScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class UserScreenState extends ConsumerState<UserScreen> {
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
 
@@ -46,7 +48,10 @@ class _UserScreenState extends State<UserScreen> {
         centerTitle: true,
         elevation: 0.5,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            ref.read(authProvider.notifier).logout();
+            context.go('/login');
+          },
           icon: const Icon(
             Icons.exit_to_app_outlined,
           ),

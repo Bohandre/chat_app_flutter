@@ -33,7 +33,7 @@ class Labels extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context.go(route);
+              context.push(route);
             },
             child: Text(
               textButton,
