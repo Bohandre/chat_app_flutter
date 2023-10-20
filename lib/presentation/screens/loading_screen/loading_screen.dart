@@ -12,27 +12,30 @@ class LoadingScreen extends ConsumerWidget {
       body: FutureBuilder(
         future: ref.read(authProvider.notifier).checkAuthStatus(),
         builder: (context, snapshot) {
-          print('${snapshot.hasData} ${snapshot.data}');
-          if (snapshot.hasData) {
-            WidgetsBinding.instance
-                .addPostFrameCallback((_) => context.go('/users'));
-          } else {
-            WidgetsBinding.instance
-                .addPostFrameCallback((_) => context.go('/login'));
+          // print('${snapshot.hasData} ${snapshot.data}');
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('Validando información...'),
+                ],
+              ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              WidgetsBinding.instance
+                  .addPostFrameCallback((_) => context.go('/users'));
+            } else {
+              WidgetsBinding.instance
+                  .addPostFrameCallback((_) => context.go('/login'));
+            }
           }
-
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('Validando información...'),
-              ],
-            ),
-          );
+          return const SizedBox.shrink();
         },
       ),
     );

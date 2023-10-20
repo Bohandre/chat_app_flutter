@@ -111,7 +111,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       errorMessage: errorMessage,
     );
 
-    print('otro cualquier cosa');
+    print('Función logOut');
     // ! limpiar token
     await keyValueStorageService.removeKey('token');
   }

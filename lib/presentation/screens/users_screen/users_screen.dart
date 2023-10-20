@@ -42,9 +42,12 @@ class UserScreenState extends ConsumerState<UserScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final authService = ref.watch(authProvider);
+    final user = authService.user;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UsersScreen'),
+        title: Text(user!.fullName),
         centerTitle: true,
         elevation: 0.5,
         leading: IconButton(

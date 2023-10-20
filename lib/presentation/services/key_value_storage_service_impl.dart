@@ -25,8 +25,8 @@ class KeyValueStorageServiceImpl extends KeyValueStorageService {
 
   @override
   Future<bool> removeKey(String key) async {
-    print('cualquier cosa');
     final prefs = await getSharedPrefs();
+    print('Remove Token');
     return await prefs.remove(key);
   }
 

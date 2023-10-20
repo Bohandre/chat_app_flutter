@@ -138,11 +138,14 @@ class Form extends ConsumerWidget {
               fixedSize: Size(size.width * .5, size.height * .04),
               onPressed: loginForm.isPosting
                   ? null
-                  : () {
+                  : () async {
                       try {
-                        ref.read(loginFormProvider.notifier).onFormSubmit();
+                        await ref
+                            .read(loginFormProvider.notifier)
+                            .onFormSubmit();
                         FocusManager.instance.primaryFocus?.unfocus();
-                        context.go('/');
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((_) => context.go('/'));
                         // print(loginForm);
                       } catch (e) {
                         Exception(e);
