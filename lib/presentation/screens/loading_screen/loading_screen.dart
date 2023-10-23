@@ -1,13 +1,16 @@
-import 'package:chat_app/presentation/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:chat_app/presentation/providers/providers.dart';
 
 class LoadingScreen extends ConsumerWidget {
   const LoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final socketProvider = ref.watch(socketServiceProvider);
+
     return Scaffold(
       body: FutureBuilder(
         future: ref.read(authProvider.notifier).checkAuthStatus(),
@@ -28,6 +31,7 @@ class LoadingScreen extends ConsumerWidget {
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
+              socketProvider.connect();
               WidgetsBinding.instance
                   .addPostFrameCallback((_) => context.go('/users'));
             } else {

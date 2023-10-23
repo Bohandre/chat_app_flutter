@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:chat_app/presentation/auth/domain/domain.dart';
 import 'package:chat_app/presentation/auth/infrastructure/infrastructure.dart';
 import 'package:chat_app/presentation/services/services.dart';

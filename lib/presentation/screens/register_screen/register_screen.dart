@@ -1,14 +1,12 @@
 // ignore_for_file: avoid_print
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:chat_app/config/theme/app_theme.dart';
-import 'package:chat_app/presentation/providers/bool_provider.dart';
-import 'package:chat_app/presentation/providers/register_form_state.dart';
-import 'package:chat_app/presentation/widgets/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
+import 'package:chat_app/config/theme/app_theme.dart';
+import 'package:chat_app/presentation/widgets/widgets.dart';
 import '../../providers/providers.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -71,14 +69,22 @@ class RegisterForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final registerForm = ref.watch(registerFormProvider);
-    final passwordVisible = ref.watch(boolProvider);
-    final size = MediaQuery.of(context).size;
-
+    // - Validación que determina si hay un error en el login y muestra un mensaje
     ref.listen(authProvider, (previus, next) {
       if (next.errorMessage.isEmpty) return;
       showSnackBar(context, next.errorMessage);
     });
+    // -
+
+    // * Declaración de medíaQuery
+    final size = MediaQuery.of(context).size;
+    // *
+
+    // Providers
+    final registerForm = ref.watch(registerFormProvider);
+    final passwordVisible = ref.watch(boolProvider);
+    final socketService = ref.watch(socketServiceProvider);
+    //
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -160,11 +166,15 @@ class RegisterForm extends ConsumerWidget {
               fixedSize: Size(size.width * .5, size.height * .04),
               onPressed: registerForm.isPosting
                   ? null
-                  : () {
+                  : () async {
                       try {
-                        ref.read(registerFormProvider.notifier).onFormSubmit();
+                        await ref
+                            .read(registerFormProvider.notifier)
+                            .onFormSubmit();
+                        socketService.connect();
                         FocusManager.instance.primaryFocus?.unfocus();
-                        context.go('/users');
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((_) => context.go('/users'));
                       } catch (e) {
                         Exception(e);
                       }

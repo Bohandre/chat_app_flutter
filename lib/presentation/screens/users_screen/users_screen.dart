@@ -1,10 +1,13 @@
-import 'package:chat_app/config/config.dart';
-import 'package:chat_app/presentation/providers/auth_provider.dart';
-import 'package:chat_app/presentation/screens/users_screen/models/user_model.dart';
+import 'package:chat_app/presentation/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import 'package:chat_app/config/config.dart';
+import 'package:chat_app/presentation/providers/providers.dart';
+import 'package:chat_app/presentation/screens/users_screen/models/user_model.dart';
 
 class UserScreen extends ConsumerStatefulWidget {
   const UserScreen({super.key});
@@ -43,6 +46,7 @@ class UserScreenState extends ConsumerState<UserScreen> {
     final size = MediaQuery.of(context).size;
 
     final authService = ref.watch(authProvider);
+    final socketService = ref.watch(socketServiceProvider);
     final user = authService.user;
 
     return Scaffold(
@@ -53,6 +57,7 @@ class UserScreenState extends ConsumerState<UserScreen> {
         leading: IconButton(
           onPressed: () {
             ref.read(authProvider.notifier).logout();
+            ref.read(socketServiceProvider).disconnect();
             context.go('/login');
           },
           icon: const Icon(
@@ -60,20 +65,24 @@ class UserScreenState extends ConsumerState<UserScreen> {
           ),
         ),
         actions: [
-          Container(
-            margin: EdgeInsets.only(
-              right: size.width * .04,
-            ),
-            child: Icon(
-              Icons.check_circle,
-              color: Colors.blue[400],
-            ),
-
-            // Icon(
-            //   Icons.offline_bolt,
-            //   color: Colors.red[800],
-            // ),
-          ),
+          Consumer(builder: (context, watch, child) {
+            print(
+                '******** Estado del socket desde la vista: ${socketService.serverStatus} *******');
+            return Container(
+              margin: EdgeInsets.only(
+                right: size.width * .04,
+              ),
+              child: socketService.serverStatus == ServerStatus.Online
+                  ? Icon(
+                      Icons.check_circle,
+                      color: Colors.blue[400],
+                    )
+                  : Icon(
+                      Icons.offline_bolt,
+                      color: Colors.red[800],
+                    ),
+            );
+          }),
           IconButton(
             onPressed: () {
               context.push('/theme-changer');

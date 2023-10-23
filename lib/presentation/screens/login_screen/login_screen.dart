@@ -1,12 +1,12 @@
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:chat_app/config/theme/app_theme.dart';
-import 'package:chat_app/presentation/providers/auth_provider.dart';
-import 'package:chat_app/presentation/providers/bool_provider.dart';
-import 'package:chat_app/presentation/providers/login_form_provider.dart';
-import 'package:chat_app/presentation/widgets/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
+import 'package:chat_app/config/theme/app_theme.dart';
+import 'package:chat_app/presentation/providers/providers.dart';
+import 'package:chat_app/presentation/widgets/widgets.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -49,6 +49,7 @@ class LoginScreen extends StatelessWidget {
 class Form extends ConsumerWidget {
   const Form({super.key});
 
+  // ** Función que muestra el snackBar de error
   void showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -65,17 +66,25 @@ class Form extends ConsumerWidget {
       ),
     );
   }
+  // **
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final size = MediaQuery.of(context).size;
-
-    final loginForm = ref.watch(loginFormProvider);
-    final passwordVisible = ref.watch(boolProvider);
+    // - Validación que determina si hay un error en el login y muestra un mensaje
     ref.listen(authProvider, (previus, next) {
       if (next.errorMessage.isEmpty) return;
       showSnackBar(context, next.errorMessage);
     });
+    // -
+
+    // * Declaración de medíaQuery
+    final size = MediaQuery.of(context).size;
+    // *
+
+    // Providers
+    final loginForm = ref.watch(loginFormProvider);
+    final passwordVisible = ref.watch(boolProvider);
+    //
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -139,10 +148,12 @@ class Form extends ConsumerWidget {
               onPressed: loginForm.isPosting
                   ? null
                   : () async {
+                      final socketService = ref.read(socketServiceProvider);
                       try {
                         await ref
                             .read(loginFormProvider.notifier)
                             .onFormSubmit();
+                        socketService.connect();
                         FocusManager.instance.primaryFocus?.unfocus();
                         WidgetsBinding.instance
                             .addPostFrameCallback((_) => context.go('/'));
